@@ -1,23 +1,39 @@
-// A working gta6-cover-art-01 entry (Node 22, standard library only): the app is this directory's app/ folder, plain
-// static files a desktop browser loads offline (app/index.html and its ES modules, no library and no network
-// request), and the program hands it in. It copies app/ and screenshots/ from beside this file to /output and writes
-// /output/dossier.json, the summary the judge reads, with the vendored make.fun library. Only the plumbing, not the
-// cover art the bounty asks for: Cover Snap, a plain one-photo square cover with a sunset tint and a bold caption,
-// exported as a 1080 x 1080 PNG. Its two sample photos (app/samples/) were made for make.fun with an image model and
-// are free to use. Build your own GTA-style cover maker in its place, put your 3 or 4 PNG or JPEG screenshots in
-// screenshots/ (the first by name is the cover) and run it.
+// Leonida Cover Studio — entry program for make.fun's "Make GTA 6 Cover Art" (gta6-cover-art-01).
+// Authored for this entry: the app in app/ is an offline cover-art studio (multi-panel GTA-style
+// collages, Vice City colour grades, bold lettering, PNG export at four post sizes), and this
+// program hands it in: it validates the entry first (app/index.html present, 3–4 screenshots,
+// each within the scorer's 256 KiB cap), then copies app/ and screenshots/ beside this file to
+// /output and writes /output/dossier.json with the vendored make.fun library (vendor/makefun-app.ts,
+// untouched). Node 22, standard library only; the app itself needs no network and no build step.
 //
 // Serve it locally with `node serve.ts`, then open http://localhost:8080.
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 
-import { cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-app.ts';
 
 const here = fileURLToPath(new URL('.', import.meta.url));
 const out = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
+
+// Authored validation: fail loudly here, with the fix named, instead of handing the scorer a
+// broken entry (a missing app shell, the wrong number of screenshots, or one over its cap).
+const SHOT_CAP = 262144;
+if (!existsSync(join(here, 'app', 'index.html'))) {
+  throw new Error('entry invalid: app/index.html is missing — the studio shell must ship in app/');
+}
+const shots = existsSync(join(here, 'screenshots'))
+  ? readdirSync(join(here, 'screenshots')).filter((f) => /\.(png|jpe?g)$/i.test(f)).sort()
+  : [];
+if (shots.length < 3 || shots.length > 4) {
+  throw new Error(`entry invalid: screenshots/ holds ${shots.length} image(s) — the scorer wants 3 or 4`);
+}
+for (const f of shots) {
+  const bytes = statSync(join(here, 'screenshots', f)).size;
+  if (bytes > SHOT_CAP) throw new Error(`entry invalid: screenshots/${f} is ${bytes} bytes — over the ${SHOT_CAP} cap`);
+}
 
 mkdirSync(out, { recursive: true });
 cpSync(join(here, 'app'), join(out, 'app'), { recursive: true });

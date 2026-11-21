@@ -1,5 +1,6 @@
 [
-  { "name": "1-cover.jpg", "query": "?shot=cover&photo=pier&caption=Sunset%20Heist", "w": 1080, "h": 1080 },
-  { "name": "2-editor.jpg", "query": "?shot=editor&photo=boulevard&caption=Boulevard%20Queen", "w": 1280, "h": 720 },
-  { "name": "3-cover.jpg", "query": "?shot=cover&photo=boulevard&caption=Boulevard%20Queen", "w": 1080, "h": 1080 }
+  { "name": "1-cover.jpg", "query": "?shot=cover&layout=classic&grade=vice&caption=LEONIDA&subtitle=starring%20the%20Boulevard%20Queen&photos=boulevard,pier", "w": 1080, "h": 1080 },
+  { "name": "2-editor.jpg", "query": "?shot=editor&layout=classic&grade=vice&caption=LEONIDA&photos=boulevard,pier", "w": 1280, "h": 720 },
+  { "name": "3-cover.jpg", "query": "?shot=cover&layout=trio&grade=neon&style=chrome&caption=NEON%20HARBOUR&subtitle=starring%20the%20Pier%20King&photos=pier,boulevard", "w": 1080, "h": 1080 },
+  { "name": "4-poster.jpg", "query": "?shot=cover&layout=poster&grade=vice&size=portrait&caption=BOULEVARD&subtitle=one%20last%20ride%20at%20sunset&photos=boulevard,pier", "w": 1080, "h": 1350 }
 ]
